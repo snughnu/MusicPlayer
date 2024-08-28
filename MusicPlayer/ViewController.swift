@@ -6,27 +6,98 @@
 //
 
 import UIKit
+import AVFoundation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, AVAudioPlayerDelegate {
 
+    var player: AVAudioPlayer!
+    var timer: Timer!
+    
     @IBOutlet var timeLabel: UILabel!
     @IBOutlet var playPauseButton: UIButton!
     @IBOutlet var progressSlider: UISlider!
     
+    // 처음에 플레이어를 초기화하는 메서드
+    func initializePlayer() {
+        guard let soundAsset: NSDataAsset = NSDataAsset(name: "sound") else {
+            print("음원 파일 에셋을 가져올 수 없습니다")
+            return
+        }
+        do {
+            try self.player = AVAudioPlayer(data: soundAsset.data)
+            self.player.delegate = self
+        } catch let error as NSError {
+            print("플레이어 초기화 실패")
+            print("코드 : \(error.code), 메세지 : \(error.localizedDescription)")
+        }
+            
+        self.progressSlider.maximumValue = Float(self.player.duration)
+        self.progressSlider.minimumValue = 0
+        self.progressSlider.value = Float(self.player.currentTime)
+    }
+
+    // 레이블을 매초마다 우선 업데이트 해주는 메서드
+    func updateTimeLabelText(time: TimeInterval) {
+        let minute: Int = Int(time / 60)
+        let second: Int = Int(time.truncatingRemainder(dividingBy: 60))
+        let milisecond: Int = Int(time.truncatingRemainder(dividingBy: 1) * 100)
+        
+        let timeText: String = String(format: "%02ld:%02ld:%02ld", minute, second, milisecond)
+        
+        self.timeLabel.text = timeText
+    }
+    
+    // 타이머를 만들고 수행해 줄 메서드
+    func makeAndFireTimer() {
+        self.timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { [unowned self] (timer: Timer) in
+                
+            if self.progressSlider.isTracking { return }
+            
+            self.updateTimeLabelText(time: self.player.currentTime)
+            self.progressSlider.value = Float(self.player.currentTime)
+        })
+        self.timer.fire()
+    }
+    
+    // 타이머를 해제해 줄 메서드
+    func invalidateTimer() {
+        self.timer.invalidate()
+        self.timer = nil
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        self.initializePlayer()
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
     }
 
 
     @IBAction func touchPlayPauseButton(_ sender: UIButton) {
-        print("button tapped")
+       
+        sender.isSelected = !sender.isSelected
+        
+        if sender.isSelected {
+            self.player?.play()
+        } else {
+            self.player?.pause()
+        }
+        
+        if sender.isSelected {
+            self.makeAndFireTimer()
+        } else {
+            self.invalidateTimer()
+        }
     }
     
     
     @IBAction func sliderValueChange(_ sender: UISlider) {
-        print("slider value change")
+        self.updateTimeLabelText(time: TimeInterval(sender.value))
+        if sender.isTracking { return }
+        self.player.currentTime = TimeInterval(sender.value)
     }
     
 }

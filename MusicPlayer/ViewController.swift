@@ -10,6 +10,7 @@ import AVFoundation
 
 class ViewController: UIViewController, AVAudioPlayerDelegate {
 
+    // MARK: - Properties
     var player: AVAudioPlayer!
     var timer: Timer!
     
@@ -36,6 +37,8 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
         self.progressSlider.value = Float(self.player.currentTime)
     }
 
+    
+    
     // 레이블을 매초마다 우선 업데이트 해주는 메서드
     func updateTimeLabelText(time: TimeInterval) {
         let minute: Int = Int(time / 60)

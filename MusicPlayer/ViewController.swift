@@ -76,21 +76,21 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
     }
     
     func addPlayPauseButton() {
-        let button: UIButton = UIButton(type: UIButtonType.custom)
+        let button: UIButton = UIButton(type: UIButton.ButtonType.custom)
         button.translatesAutoresizingMaskIntoConstraints = false
         
         self.view.addSubview(button)
         
-        button.setImage(UIImage(named: "button_play"), for: UIControlState.normal)
-        button.setImage(UIImage(named: "button_pause"), for: UIControlState.selected)
+        button.setImage(UIImage(named: "button_play"), for: UIControl.State.normal)
+        button.setImage(UIImage(named: "button_pause"), for: UIControl.State.selected)
         
-        button.addTarget(self, action: #selector(self.toucheUpPlayPauseButton(_:)), for: UIControlEvents.touchUpInside)
+        button.addTarget(self, action: #selector(self.touchPlayPauseButton(_:)), for: UIControl.Event.touchUpInside)
         
         let centerX: NSLayoutConstraint
         centerX = button.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
         
         let centerY: NSLayoutConstraint
-        centerY = NSLayoutConstraint(item: button, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: self.view, attribute: NSLayoutAttribute.centerY, multiplier: 0.8, constant: 0)
+        centerY = NSLayoutConstraint(item: button, attribute: NSLayoutConstraint.Attribute.centerY, relatedBy: NSLayoutConstraint.Relation.equal, toItem: self.view, attribute: NSLayoutConstraint.Attribute.centerY, multiplier: 0.8, constant: 0)
         
         let width: NSLayoutConstraint
         width = button.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.5)
@@ -115,7 +115,7 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
         
         timeLabel.textColor = UIColor.black
         timeLabel.textAlignment = NSTextAlignment.center
-        timeLabel.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.headline)
+        timeLabel.font = UIFont.preferredFont(forTextStyle: UIFont.TextStyle.headline)
         
         let centerX: NSLayoutConstraint
         centerX = timeLabel.centerXAnchor.constraint(equalTo: self.playPauseButton.centerXAnchor)
@@ -138,7 +138,7 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
         
         slider.minimumTrackTintColor = UIColor.red
         
-        slider.addTarget(self, action: #selector(self.sliderValueChange(_:)), for: UIControlEvents.valueChanged)
+        slider.addTarget(self, action: #selector(self.sliderValueChange(_:)), for: UIControl.Event.valueChanged)
         
         let safeAreaGuide: UILayoutGuide = self.view.safeAreaLayoutGuide
         
